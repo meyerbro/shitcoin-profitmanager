@@ -294,7 +294,7 @@ Do {
   Write-Host "...Best Coin to Mine:" $best_coin_check
   if ($best_coin -eq $best_coin_check) {
   $set_sleep = "60"
-  Write-Host "Sleeping for another" $set_sleep "seconds, then checking again."
+  Write-Host $TimeNow : "Sleeping for another" $set_sleep "seconds, then checking again."
   Start-Sleep -Seconds $set_sleep
   }
  } 
