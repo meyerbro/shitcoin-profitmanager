@@ -299,7 +299,9 @@ $TimeEnd = $timeStart.addminutes($mine_minutes)
 Write-Host "
 
 Started Worker:       $TimeStart"
-write-host "Check Profitiability: $TimeEnd"
+write-host "Check Profitiability: $TimeEnd
+
+"
 
 # If we are mining the default coin, pause for 5 minutes.
 if ($bypass_check -eq 'yes'){
@@ -330,8 +332,8 @@ Do {
 }
 While ($best_coin -eq $best_coin_check)
 
-Write-Host "Profitability has changed, switching now"
-Write-Host "Shutting down miner, please wait..... "
+Write-Host $TimeNow : "Profitability has changed, switching now"
+Write-Host $TimeNow : "Shutting down miner, please wait..... "
 
 # Stop the mining software.
 Stop-Process -Name $miner_type
