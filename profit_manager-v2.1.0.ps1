@@ -1,12 +1,16 @@
 $Host.UI.RawUI.WindowTitle = "CryptoNight Profit Manager by BearlyHealz"
 
-# Change path to whatever network drive letter you mapped each computer to
+# Change path to whatever network drive letter you mapped each computer to.
 $path = "u:"
 
-#Pull in the computer name from Windows
+# How many minutes do you want the miner to run before checking for a new coin?
+$mine_minutes = 5
+$mine_seconds = ($mine_minutes*60)
+
+#Pull in the computer name from Windows.
 $PC = $env:ComputerName
 
-# Set the hashrate for each computer. The computer name MUST be the exact name as it appears in Windows
+# Set the hashrate for each computer. The computer name MUST be the exact name as it appears in Windows.
 if ($pc -eq 'GAMINGPC')
 {Set-Variable -Name "hashrate" -Value "81000"
 }
@@ -35,27 +39,27 @@ if ($pc -eq 'DELLPC01')
 {Set-Variable -Name "hashrate" -Value "1800"
 }
 
-#Pull in the best coin, parse symbol from json
+#Pull in the best coin, parse symbol from json.
 $get_coin = Invoke-RestMethod -Uri "https://minecryptonight.net/api/best" -Method Get 
 $best_coin = $get_coin.current
 
-#list all the coins you plan to mine ----the symbol MUST match and be UPPERCASE
+#list all the coins you plan to mine ----the symbol MUST match.
 $Array = "XTL","XMR","TRTL","GRFT","ITNS","IPBC","TUBE","AEON","XHV","LOKI","ETN","XMV","XRN","ARTO","MSR"
 
-#Check if the best coin to mine is in your list
-if ($best_coin -in $Array)
+#Check if the best coin to mine is in your list.
+if ($best_coin -in $Array.ToUpper())
 {}
 else
 {
 Write-Host "The best coin to mine is $best_coin but it's not in your list."
-#Choose a default coin to mine if one of the coins listed above is NOT in your list. Prevents the miner from closing when there isn't a match
+#Choose a default coin to mine if one of the coins listed above is NOT in your list. Prevents the miner from closing when there isn't a match.
 $best_coin = "XTL"
 $bypass_check = "yes"
 }
 
 Write-Host "...Activating Worker on $pc"
 
-#Check folder structure, create missing folders
+#Check folder structure, create missing folders.
 if (Test-Path $path\$pc -PathType Container){
 Write-Host "...Checking Folder Structure. (OK!)"
 }
@@ -209,7 +213,7 @@ Write-Host "...Establishing connection to:" $pool
 Write-Host "...Switching Algo to:" $Algo
 Write-Host "...Authorizing inbound funds to Wallet:" $wallet
 
-# Check for pools.txt file, delete if exists, will create a new one once mining app launches
+# Check for pools.txt file, delete if exists, will create a new one once mining app launches.
 if(Test-Path $path\pools.txt)
 {
 Write-Host "...Purging old Pools.txt file (OK!)"
@@ -220,7 +224,7 @@ else
 Write-Host "...Could not find Pools.txt file, there is nothing to delete. (OK!)"
 }
 
-# These are the default apps used for mining. Updated software can be found at https://github.com/fireice-uk/xmr-stak/releases
+# These are the default apps used for mining. Updated software can be found at https://github.com/fireice-uk/xmr-stak/releases.
 if ($miner_type -eq 'xmr-stak')
 {Set-Variable -Name "miner_app" -Value "$path\Miner-XMRstak\xmr-stak.exe"
 }
@@ -246,7 +250,7 @@ if ($diff_config -eq '4')
 
 Write-Host "...Setting Fixed Diff Config to $fixed_diff"
 
-# Configure the attributes for the mining software
+# Configure the attributes for the mining software.
 $worker_settings = "--poolconf $path\$pc\pools.txt --config $path\config.txt --currency $algo --url $pool --user $wallet$fixed_diff --rigid $pc --pass w=$pc --cpu $path\$pc\cpu.txt --amd $path\$pc\amd.txt --nvidia $path\$pc\nvidia.txt"
 
 Write-Host "...Starting $miner_type in another window."
@@ -255,20 +259,20 @@ Write-Host "...Starting $miner_type in another window."
 $get_coin_check = Invoke-RestMethod -Uri "https://minecryptonight.net/api/best" -Method Get
 $best_coin_check = $get_coin_check.current
 
-# Start the mining software
+# Start the mining software.
 start-process -FilePath $miner_app -args $worker_settings
 
 # Establish the date and time
 $TimeStart = Get-Date
-# My default setting is to mine for 5 minutes, then look to see if there's a new coin. You can feel free to change this value.
-$TimeEnd = $timeStart.addminutes(1)
+# Mine for established time, then look to see if there's a new coin.
+$TimeEnd = $timeStart.addminutes($mine_minutes)
 Write-Host "Started Worker:       $TimeStart"
 write-host "Check Profitiability: $TimeEnd"
 
-# If we are mining the default coin, pause for 5 minutes
+# If we are mining the default coin, pause for 5 minutes.
 if ($bypass_check -eq 'yes'){
  Write-Host $TimeNow : "Currently mining default coin:"$best_coin ": Checking again at $TimeEnd"
-Start-Sleep -Seconds 300
+Start-Sleep -Seconds $mine_seconds
 }
 
 # Begin a loop to check if the current coin is the best coin to mine. If not, restart the app and switchin coins.
@@ -281,7 +285,7 @@ Do {
   Write-host "...Checking Coin Profitability."
   Write-Host "...Best Coin to Mine:" $best_coin_check
   if ($best_coin -eq $best_coin_check) {
-  $set_sleep = "50"
+  $set_sleep = "60"
   Write-Host "Sleeping for another" $set_sleep "Seconds"
   Start-Sleep -Seconds $set_sleep
   }
@@ -297,11 +301,11 @@ While ($best_coin -eq $best_coin_check)
 Write-Host "Profitability has changed, switching now"
 Write-Host "Shutting down miner, please wait..... "
 
-# Stop the mining software
+# Stop the mining software.
 Stop-Process -Name $miner_type
 
-# Sleep for 8 seconds to give the mining software enough time to stop. Adjust this higher or lower depending on your system stability
+# Sleep for 8 seconds to give the mining software enough time to stop. Adjust this higher or lower depending on your system stability.
 Start-Sleep -s 8
 
-#The miner will reload the Powershell file. You can make changes while it's running, and they will be applied on reload
+#The miner will reload the Powershell file. You can make changes while it's running, and they will be applied on reload.
 .\profit_manager-v2.1.0.ps1
