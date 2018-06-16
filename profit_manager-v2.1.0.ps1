@@ -1,6 +1,5 @@
 Write-Host "
 
-
 Shitcoin-Profit Manager created by Bearlyhealz. Free to use, donations kindly accepted. 
 
 ETH Address: 0xA58B04A5Dc2F3934cB54E087b927268836Ac0159
@@ -10,7 +9,6 @@ Credit for XMR-Stak goes to fierce-uk at https://github.com/fireice-uk
 Credit for ARTO-Stak goes to Artocash at https://github.com/artocash
 
 Feature requests and suggestions welcomed! :)
-
 
 "
 
@@ -232,12 +230,14 @@ Set-Variable -Name "wallet" -Value "5pJLM5hVyASHgC5m1h7axDVNdharEC48dcEmMDNdDTbt
 
 Write-Host "...Establishing connection to:" $pool
 Write-Host "...Switching Algo to:" $Algo
-Write-Host "...Authorizing inbound funds to Wallet:" $wallet
+Write-Host "...Authorizing inbound funds to Wallet:"
+Write-Host "...$wallet"
 
 # Check for pools.txt file, delete if exists, will create a new one once mining app launches.
 if(Test-Path $path\pools.txt)
 {
-Write-Host "...Purging old Pools.txt file (OK!)"
+Write-Host "
+...Purging old Pools.txt file (OK!)"
 del $path\pools.txt
 }
 else
@@ -281,14 +281,13 @@ $get_coin_check = Invoke-RestMethod -Uri "https://minecryptonight.net/api/best" 
 $best_coin_check = $get_coin_check.current
 
 # Start the mining software.
-start-process -FilePath $miner_app -args $worker_settings
+start-process -FilePath $miner_app -args $worker_settings -WindowStyle Minimized
 
 # Establish the date and time
 $TimeStart = Get-Date
 # Mine for established time, then look to see if there's a new coin.
 $TimeEnd = $timeStart.addminutes($mine_minutes)
 Write-Host "
-
 
 Started Worker:       $TimeStart"
 write-host "Check Profitiability: $TimeEnd"
@@ -309,7 +308,7 @@ Do {
   Write-host $TimeNow : "Checking Coin Profitability."
   Write-Host $TimeNow : "Best Coin to Mine:" $best_coin_check
   if ($best_coin -eq $best_coin_check) {
-  $set_sleep = "60"
+  
   Write-Host $TimeNow : "Sleeping for another" $set_sleep "seconds, then checking again."
   Start-Sleep -Seconds $set_sleep
   }
@@ -318,7 +317,7 @@ Do {
   
   Write-Host $TimeNow : "Currently mining"$best_coin": Checking again at $TimeEnd"
  }
- Start-Sleep -Seconds 10
+ Start-Sleep -Seconds 60
 }
 While ($best_coin -eq $best_coin_check)
 
