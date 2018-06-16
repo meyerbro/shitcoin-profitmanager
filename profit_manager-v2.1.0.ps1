@@ -298,9 +298,9 @@ start-process -FilePath $miner_app -args $worker_settings -WindowStyle Minimized
 $TimeStart = Get-Date
 # Mine for established time, then look to see if there's a new coin.
 $TimeEnd = $timeStart.addminutes($mine_minutes)
-Write-Host " -ForegroundColor green
+Write-Host "
 
-Started Worker:       $TimeStart" 
+Started Worker:       $TimeStart"  -ForegroundColor green
 write-host "Check Profitiability: $TimeEnd
 
 " -ForegroundColor green
