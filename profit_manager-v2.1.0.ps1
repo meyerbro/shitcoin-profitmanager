@@ -242,7 +242,7 @@ Set-Variable -Name "wallet" -Value "5pJLM5hVyASHgC5m1h7axDVNdharEC48dcEmMDNdDTbt
 Write-Host "...Establishing connection to:" $pool
 Write-Host "...Switching Algo to:" $Algo
 Write-Host "...Authorizing inbound funds to Wallet:"
-Write-Host "...$wallet"
+Write-Host "   $wallet"
 
 # Check for pools.txt file, delete if exists, will create a new one once mining app launches.
 if(Test-Path $path\pools.txt)
