@@ -81,7 +81,7 @@ if ($best_coin -in $Array.ToUpper())
 {}
 else
 {
-Write-Host "The best coin to mine is $best_coin but it's not in your list."
+Write-Host "The best coin to mine is $best_coin but it's not in your list." -ForegroundColor red
 #Choose a default coin to mine if one of the coins listed above is NOT in your list. Prevents the miner from closing when there isn't a match.
 $best_coin = $default_coin
 $bypass_check = "yes"
@@ -91,11 +91,11 @@ Write-Host "...Activating Worker on $pc"
 
 #Check folder structure, create missing folders.
 if (Test-Path $path\$pc -PathType Container){
-Write-Host "...Checking Folder Structure. (OK!)"
+Write-Host "...Checking Folder Structure. (OK!)" -ForegroundColor green
 }
 else
 {
-Write-Host "...Creating Folder for $pc"
+Write-Host "...Creating Folder for $pc" -ForegroundColor yellow
 $fso = new-object -ComObject scripting.filesystemobject
 $fso.CreateFolder("$path\$pc")
 }
@@ -307,7 +307,7 @@ write-host "Check Profitiability: $TimeEnd
 
 # If we are mining the default coin, pause for 5 minutes.
 if ($bypass_check -eq 'yes'){
- Write-Host $TimeNow : "Currently mining default coin:"$best_coin ": Checking again at $TimeEnd"
+ Write-Host $TimeNow : "Currently mining default coin:"$best_coin ": Checking again at $TimeEnd" -ForegroundColor red
 Start-Sleep -Seconds $mine_seconds
 }
 
@@ -333,8 +333,8 @@ Do {
 }
 While ($best_coin -eq $best_coin_check)
 
-Write-Host $TimeNow : "Profitability has changed, switching now"
-Write-Host $TimeNow : "Shutting down miner, please wait..... "
+Write-Host $TimeNow : "Profitability has changed, switching now" -ForegroundColor yellow
+Write-Host $TimeNow : "Shutting down miner, please wait..... "   -ForegroundColor yellow
 
 # Stop the mining software.
 Stop-Process -Name $miner_type
