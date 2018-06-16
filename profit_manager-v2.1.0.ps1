@@ -1,9 +1,18 @@
-Write-Host "Shitcoin-Profit Manager created by Bearlyhealz. Free to use, donations kindly accepted. 
+Write-Host "
+
+
+Shitcoin-Profit Manager created by Bearlyhealz. Free to use, donations kindly accepted. 
+
 ETH Address: 0xA58B04A5Dc2F3934cB54E087b927268836Ac0159
 BTC Address: 3Pz3JPxGsQxsyJT7km58NTohC9C16ndpAN
 
 Credit for XMR-Stak goes to fierce-uk at https://github.com/fireice-uk 
-Credit for ARTO-Stak goes to Artocash at https://github.com/artocash"
+Credit for ARTO-Stak goes to Artocash at https://github.com/artocash
+
+Feature requests and suggestions welcomed! :)
+
+
+"
 
 
 $Host.UI.RawUI.WindowTitle = "CryptoNight Profit Manager by BearlyHealz"
@@ -274,7 +283,10 @@ start-process -FilePath $miner_app -args $worker_settings
 $TimeStart = Get-Date
 # Mine for established time, then look to see if there's a new coin.
 $TimeEnd = $timeStart.addminutes($mine_minutes)
-Write-Host "Started Worker:       $TimeStart"
+Write-Host "
+
+
+Started Worker:       $TimeStart"
 write-host "Check Profitiability: $TimeEnd"
 
 # If we are mining the default coin, pause for 5 minutes.
