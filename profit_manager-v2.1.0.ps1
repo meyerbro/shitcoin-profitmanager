@@ -290,8 +290,8 @@ Do {
   $get_coin_check = Invoke-RestMethod -Uri "https://minecryptonight.net/api/best" -Method Get
   $best_coin_check = $get_coin_check.current
   
-  Write-host "...Checking Coin Profitability."
-  Write-Host "...Best Coin to Mine:" $best_coin_check
+  Write-host $TimeNow : "Checking Coin Profitability."
+  Write-Host $TimeNow : "Best Coin to Mine:" $best_coin_check
   if ($best_coin -eq $best_coin_check) {
   $set_sleep = "60"
   Write-Host $TimeNow : "Sleeping for another" $set_sleep "seconds, then checking again."
