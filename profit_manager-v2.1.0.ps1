@@ -1,3 +1,12 @@
+Function Set-WindowSize {
+Param([int]$x=$host.ui.rawui.windowsize.width,
+      [int]$y=$host.ui.rawui.windowsize.heigth)
+
+    $size=New-Object System.Management.Automation.Host.Size($x,$y)
+    $host.ui.rawui.WindowSize=$size}
+
+    Set-WindowSize 120 50
+
 Write-Host "
 
 Shitcoin-Profit Manager created by Bearlyhealz. Free to use, donations kindly accepted. 
