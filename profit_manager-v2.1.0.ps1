@@ -300,7 +300,7 @@ $TimeStart = Get-Date
 $TimeEnd = $timeStart.addminutes($mine_minutes)
 Write-Host "
 
-Started Worker:       $TimeStart"  -ForegroundColor green
+Started Worker:       $TimeStart" -ForegroundColor green
 write-host "Check Profitiability: $TimeEnd
 
 " -ForegroundColor green
