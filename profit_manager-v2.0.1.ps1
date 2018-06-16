@@ -12,10 +12,11 @@ if ($best_coin -in $Array)
 {}
 else
 {
-Write-Host "The best coin to mine is $best_coin but it's not in your list. $array"
 #Choose a default coin to mine if one of the coins listed above is NOT in your list. Prevents the miner from closing when there isn't a match
 $best_coin = "XTL"
-$bypass_check = "yes"
+Write-Host "The best coin to mine is $best_coin but it's not in your list. Switching to $best_coin"
+
+Set-Variable -Name "bypass_check" -Value "yes"
 }
 
 Write-Host "...Activating Worker on $pc"
@@ -244,6 +245,7 @@ $worker_settings = "--poolconf $path\pools.txt --config $path\config.txt --curre
 Write-Host "...Starting $miner_type in another window."
 
 start-process -FilePath $miner_app -args $worker_settings
+
 $get_coin_check = Invoke-RestMethod -Uri "https://minecryptonight.net/api/best" -Method Get
 $best_coin_check = $get_coin_check.current
 $TimeStart = Get-Date
@@ -251,11 +253,16 @@ $TimeStart = Get-Date
 $TimeEnd = $timeStart.addminutes(5)
 Write-Host "Started Worker:       $TimeStart"
 write-host "Check Profitiability: $TimeEnd"
+if ($bypass_check -eq 'yes'){
+ Write-Host $TimeNow : "Currently mining"$best_coin ": Checking again at $TimeEnd"
+Start-Sleep -Seconds 300
+}
 Do { 
  $TimeNow = Get-Date
   if ($TimeNow -ge $TimeEnd) {
   $get_coin_check = Invoke-RestMethod -Uri "https://minecryptonight.net/api/best" -Method Get
   $best_coin_check = $get_coin_check.current
+  
   Write-host "...Checking Coin Profitability."
   Write-Host "...Best Coin to Mine:" $best_coin_check
   if ($best_coin -eq $best_coin_check) {
@@ -271,6 +278,7 @@ Do {
  Start-Sleep -Seconds 10
 }
 While ($best_coin -eq $best_coin_check)
+
 Write-Host "Profitability has changed, switching now"
 Write-Host "Shutting down miner, please wait..... "
 Stop-Process -Name $miner_type
