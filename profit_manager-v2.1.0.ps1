@@ -8,16 +8,17 @@ Param([int]$x=$host.ui.rawui.windowsize.width,
     Set-WindowSize 120 50
 
 Write-Host "
+              _______________________________________________________________________________________
+              Shitcoin-Profit Manager created by Bearlyhealz. Free to use, donations kindly accepted. 
 
-Shitcoin-Profit Manager created by Bearlyhealz. Free to use, donations kindly accepted. 
+              ETH Address: 0xA58B04A5Dc2F3934cB54E087b927268836Ac0159
+              BTC Address: 3Pz3JPxGsQxsyJT7km58NTohC9C16ndpAN
 
-ETH Address: 0xA58B04A5Dc2F3934cB54E087b927268836Ac0159
-BTC Address: 3Pz3JPxGsQxsyJT7km58NTohC9C16ndpAN
+              Credit for XMR-Stak goes to fierce-uk at https://github.com/fireice-uk 
+              Credit for ARTO-Stak goes to Artocash at https://github.com/artocash
 
-Credit for XMR-Stak goes to fierce-uk at https://github.com/fireice-uk 
-Credit for ARTO-Stak goes to Artocash at https://github.com/artocash
-
-Feature requests and suggestions welcomed! :)
+              Feature requests and suggestions welcomed! :)
+              _______________________________________________________________________________________
 
 "
 
