@@ -1,3 +1,11 @@
+Write-Host "Shitcoin-Profit Manager created by Bearlyhealz. Free to use, donations kindly accepted. 
+ETH Address: 0xA58B04A5Dc2F3934cB54E087b927268836Ac0159
+BTC Address: 3Pz3JPxGsQxsyJT7km58NTohC9C16ndpAN
+
+Credit for XMR-Stak goes to fierce-uk at https://github.com/fireice-uk 
+Credit for ARTO-Stak goes to Artocash at https://github.com/artocash"
+
+
 $Host.UI.RawUI.WindowTitle = "CryptoNight Profit Manager by BearlyHealz"
 
 # Change path to whatever network drive letter you mapped each computer to.
@@ -286,7 +294,7 @@ Do {
   Write-Host "...Best Coin to Mine:" $best_coin_check
   if ($best_coin -eq $best_coin_check) {
   $set_sleep = "60"
-  Write-Host "Sleeping for another" $set_sleep "Seconds"
+  Write-Host "Sleeping for another" $set_sleep "seconds, then checking again."
   Start-Sleep -Seconds $set_sleep
   }
  } 
