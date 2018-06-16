@@ -34,6 +34,7 @@ $default_coin = "XTL"
 # How many minutes do you want the miner to run before checking for a new coin?
 $mine_minutes = 5
 $mine_seconds = ($mine_minutes*60)
+$set_sleep = 60
 
 #Pull in the computer name from Windows.
 $PC = $env:ComputerName
@@ -321,7 +322,6 @@ Do {
   if ($best_coin -eq $best_coin_check) {
   
   Write-Host $TimeNow : "Sleeping for another" $set_sleep "seconds, then checking again."
-  Start-Sleep -Seconds $set_sleep
   }
  } 
  else {
