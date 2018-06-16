@@ -251,6 +251,10 @@ $worker_settings = "--poolconf $path\$pc\pools.txt --config $path\config.txt --c
 
 Write-Host "...Starting $miner_type in another window."
 
+
+$get_coin_check = Invoke-RestMethod -Uri "https://minecryptonight.net/api/best" -Method Get
+$best_coin_check = $get_coin_check.current
+
 # Start the mining software
 start-process -FilePath $miner_app -args $worker_settings
 
