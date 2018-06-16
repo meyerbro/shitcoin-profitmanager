@@ -20,6 +20,10 @@ $Host.UI.RawUI.WindowTitle = "CryptoNight Profit Manager by BearlyHealz"
 # Change path to whatever network drive letter you mapped each computer to.
 $path = "u:"
 
+# Set a default coin in the event the application wants to mine a coin that you do not have a wallet for.
+
+$default_coin = "XTL"
+
 # How many minutes do you want the miner to run before checking for a new coin?
 $mine_minutes = 5
 $mine_seconds = ($mine_minutes*60)
@@ -27,7 +31,7 @@ $mine_seconds = ($mine_minutes*60)
 #Pull in the computer name from Windows.
 $PC = $env:ComputerName
 
-# Set the hashrate for each computer. The computer name MUST be the exact name as it appears in Windows.
+# Set the fixed difficulty for each computer. The computer name MUST be the exact name as it appears in Windows.
 if ($pc -eq 'GAMINGPC')
 {Set-Variable -Name "hashrate" -Value "81000"
 }
@@ -70,7 +74,7 @@ else
 {
 Write-Host "The best coin to mine is $best_coin but it's not in your list."
 #Choose a default coin to mine if one of the coins listed above is NOT in your list. Prevents the miner from closing when there isn't a match.
-$best_coin = "XTL"
+$best_coin = $default_coin
 $bypass_check = "yes"
 }
 
