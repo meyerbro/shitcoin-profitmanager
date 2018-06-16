@@ -328,7 +328,7 @@ Do {
   
   Write-Host $TimeNow : "Currently mining"$best_coin": Checking again at $TimeEnd"
  }
- Start-Sleep -Seconds 60
+ Start-Sleep -Seconds $set_sleep
 }
 While ($best_coin -eq $best_coin_check)
 
