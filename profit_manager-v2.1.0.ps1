@@ -36,6 +36,7 @@ $default_coin = "XTL"
 $mine_minutes = 5
 $mine_seconds = ($mine_minutes*60)
 $set_sleep = 60
+$enable_voice = "yes"
 
 #Pull in the computer name from Windows.
 $PC = $env:ComputerName
@@ -54,7 +55,7 @@ if ($pc -eq 'OGPC01')
 }
 
 if ($pc -eq 'MR03')
-{Set-Variable -Name "hashrate" -Value "60000"
+{Set-Variable -Name "hashrate" -Value "41220"
 }
 
 if ($pc -eq 'SERVER')
@@ -332,6 +333,14 @@ Do {
  Start-Sleep -Seconds $set_sleep
 }
 While ($best_coin -eq $best_coin_check)
+
+if ($enable_voice -eq 'yes'){
+# Speak the symbol of the coin when switching.
+$speak_coin = ("$best_coin_check" -split "([a-z0-9]{1})"  | ?{ $_.length -ne 0 }) -join " "
+Add-Type -AssemblyName System.Speech
+$synthesizer = New-Object -TypeName System.Speech.Synthesis.SpeechSynthesizer
+$synthesizer.Speak("Switching to $speak_coin") | Out-Null
+}
 
 Write-Host $TimeNow : "Profitability has changed, switching coins now." -ForegroundColor yellow
 Write-Host $TimeNow : "Shutting down miner, please wait..... "   -ForegroundColor yellow
