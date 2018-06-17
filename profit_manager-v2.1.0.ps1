@@ -60,6 +60,7 @@ if ($pc -eq 'MR03')
 
 if ($pc -eq 'SERVER')
 {Set-Variable -Name "hashrate" -Value "2400"
+$enable_voice = "no"
 }
 
 if ($pc -eq 'LAPTOPPC01')
