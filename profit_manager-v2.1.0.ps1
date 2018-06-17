@@ -17,7 +17,7 @@ Write-Host "
                 Credit for XMR-Stak goes to Fierce-UK at https://github.com/fireice-uk 
                 Credit for ARTO-Stak goes to Artocash at https://github.com/artocash
 
-                Feature requests and suggestions welcomed! :)
+                Feature requests and feedback welcomed! :)
                 _______________________________________________________________________________________
 
 "
@@ -33,7 +33,7 @@ $path = "u:"
 $default_coin = "XTL"
 
 # How many minutes do you want the miner to run before checking for a new coin?
-$mine_minutes = 5
+$mine_minutes = 10
 $mine_seconds = ($mine_minutes*60)
 $set_sleep = 60
 $enable_voice = "yes"
@@ -60,7 +60,7 @@ if ($pc -eq 'MR03')
 
 if ($pc -eq 'SERVER')
 {Set-Variable -Name "hashrate" -Value "2400"
-# You can add the following line to disable voice on specific workers.
+# You can add the following line to disable voice on specifi
 $enable_voice = "no"
 }
 
@@ -330,9 +330,13 @@ Do {
  } 
  else {
   
-  Write-Host $TimeNow : "Currently mining"$best_coin": Checking again at $TimeEnd"
+  Write-Host $TimeNow : "Currently mining $best_coin : Checking again at $TimeEnd."
  }
  Start-Sleep -Seconds $set_sleep
+ # Get the current hashrate from mining software
+  $get_hashrate = Invoke-RestMethod -Uri "http://127.0.0.1:8080/api.json" -Method Get 
+  $worker_hashrate = $get_hashrate.hashrate.total[0]
+ Write-Host $TimeNow : "Worker Hashrate:" $worker_hashrate "H/s" -ForegroundColor Cyan
 }
 While ($best_coin -eq $best_coin_check)
 
