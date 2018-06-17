@@ -358,4 +358,4 @@ Stop-Process -Name $miner_type
 Start-Sleep -s 8
 
 #The miner will reload the Powershell file. You can make changes while it's running, and they will be applied on reload.
-.\profit_manager-v2.1.0.ps1
+.\profit_manager.ps1
