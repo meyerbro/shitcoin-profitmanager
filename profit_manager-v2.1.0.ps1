@@ -333,7 +333,7 @@ Do {
 }
 While ($best_coin -eq $best_coin_check)
 
-Write-Host $TimeNow : "Profitability has changed, switching now" -ForegroundColor yellow
+Write-Host $TimeNow : "Profitability has changed, switching coins now." -ForegroundColor yellow
 Write-Host $TimeNow : "Shutting down miner, please wait..... "   -ForegroundColor yellow
 
 # Stop the mining software.
