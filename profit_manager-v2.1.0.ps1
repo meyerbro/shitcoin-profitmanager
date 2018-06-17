@@ -60,6 +60,7 @@ if ($pc -eq 'MR03')
 
 if ($pc -eq 'SERVER')
 {Set-Variable -Name "hashrate" -Value "2400"
+# You can add the following line to disable voice on specific workers.
 $enable_voice = "no"
 }
 
