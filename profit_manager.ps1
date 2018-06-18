@@ -43,7 +43,7 @@ $PC = $env:ComputerName
 
 # Set the fixed difficulty for each computer. The computer name MUST be the exact name as it appears in Windows.
 if ($pc -eq 'GAMINGPC')
-{Set-Variable -Name "hashrate" -Value "81000"
+{Set-Variable -Name "hashrate" -Value "4500"
 }
 
 if ($pc -eq 'MR02')
@@ -51,11 +51,11 @@ if ($pc -eq 'MR02')
 }
 
 if ($pc -eq 'OGPC01')
-{Set-Variable -Name "hashrate" -Value "42000"
+{Set-Variable -Name "hashrate" -Value "6100"
 }
 
 if ($pc -eq 'MR03')
-{Set-Variable -Name "hashrate" -Value "41220"
+{Set-Variable -Name "hashrate" -Value "114000"
 }
 
 if ($pc -eq 'SERVER')
@@ -323,29 +323,35 @@ Do {
   
   Write-host $TimeNow : "Checking Coin Profitability."
   Write-Host $TimeNow : "Best Coin to Mine:" $best_coin_check
+  
   if ($best_coin -eq $best_coin_check) {
   
   Write-Host $TimeNow : "Sleeping for another" $set_sleep "seconds, then checking again."
   }
- } 
- else {
+ } else {
   
   Write-Host $TimeNow : "Currently mining $best_coin : Checking again at $TimeEnd."
  }
- Start-Sleep -Seconds $set_sleep
- # Get the current hashrate from mining software
+  # Get the current hashrate from mining software
   $get_hashrate = Invoke-RestMethod -Uri "http://127.0.0.1:8080/api.json" -Method Get 
   $worker_hashrate = $get_hashrate.hashrate.total[0]
- Write-Host $TimeNow : "Worker Hashrate:" $worker_hashrate "H/s" -ForegroundColor Cyan
+  
+  if ($worker_hashrate -match "[0-9]") {
+    Write-Host $TimeNow : "Worker Hashrate:" $worker_hashrate "H/s" -ForegroundColor Cyan
+} else {
+        Write-Host $TimeNow : "Waiting on worker to warm up before displaying hashrate." -ForegroundColor Cyan
+}
+  
+  Start-Sleep -Seconds $set_sleep
 }
 While ($best_coin -eq $best_coin_check)
 
-if ($enable_voice -eq 'yes'){
+  if ($enable_voice -eq 'yes'){
 # Speak the symbol of the coin when switching.
 $speak_coin = ("$best_coin_check" -split "([a-z0-9]{1})"  | ?{ $_.length -ne 0 }) -join " "
 Add-Type -AssemblyName System.Speech
 $synthesizer = New-Object -TypeName System.Speech.Synthesis.SpeechSynthesizer
-$synthesizer.Speak("Switching to $speak_coin") | Out-Null
+$synthesizer.Speak("$pc is switching to $speak_coin") | Out-Null
 }
 
 Write-Host $TimeNow : "Profitability has changed, switching coins now." -ForegroundColor yellow
