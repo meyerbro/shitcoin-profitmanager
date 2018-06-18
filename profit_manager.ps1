@@ -18,6 +18,8 @@ Write-Host "
                 Credit for ARTO-Stak goes to Artocash at https://github.com/artocash
 
                 Feature requests and feedback welcomed! :)
+
+                                        ***** DO NOT RESIZE THIS WINDOW *****
                 _______________________________________________________________________________________
 
 "
@@ -173,9 +175,9 @@ Set-Variable -Name "wallet" -Value "bxcdyMoQzF8SvfN9KmbS27JB9TPAZYFrnTPkzvAtXcRv
 if ($best_coin -eq 'AEON')
 {
 Set-Variable -Name "miner_type" -Value "xmr-stak"
-Set-Variable -Name "diff_config" -Value "2"
+Set-Variable -Name "diff_config" -Value "1"
 Set-Variable -Name "algo" -Value "cryptonight_lite_v7"
-Set-Variable -Name "pool" -Value "aeon.miner.rocks:5555"
+Set-Variable -Name "pool" -Value "pool.aeon.hashvault.pro:5555"
 Set-Variable -Name "wallet" -Value "WmsE4nrA3aZaTEW6QKWZiuSuioCmks5fxJeaaFv1DteDb6kFYyVCNP9dwrtcScNiXbPQ9DMXbtrGGg1GThFsbVXJ2VLA8FPHD"
 }
 
