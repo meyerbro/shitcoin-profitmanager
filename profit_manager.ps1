@@ -303,14 +303,14 @@ $TimeStart = Get-Date
 $TimeEnd = $timeStart.addminutes($mine_minutes)
 Write-Host "
 
-Started Worker:       $TimeStart" -ForegroundColor green
+Started Worker:       $TimeStart" -ForegroundColor Green
 write-host "Check Profitiability: $TimeEnd
 
-" -ForegroundColor green
+" -ForegroundColor Green
 
 # If we are mining the default coin, pause for 5 minutes.
 if ($bypass_check -eq 'yes'){
- Write-Host $TimeNow : "Currently mining default coin:"$best_coin ": Checking again at $TimeEnd" -ForegroundColor red
+ Write-Host $TimeNow : "Currently mining default coin: $best_coin "": Checking again at $TimeEnd" -ForegroundColor White
 Start-Sleep -Seconds $mine_seconds
 }
 
@@ -322,7 +322,7 @@ Do {
   $best_coin_check = $get_coin_check.current
   
   Write-host $TimeNow : "Checking Coin Profitability."
-  Write-Host $TimeNow : "Best Coin to Mine:" $best_coin_check -ForegroundColor DarkYellow
+  Write-Host $TimeNow : "Best Coin to Mine:" $best_coin_check -ForegroundColor Yellow
   
   if ($best_coin -eq $best_coin_check) {
   
@@ -338,7 +338,7 @@ Do {
   $my_results = $get_hashrate.results.shares_good
   $suggested_diff = [math]::Round($worker_hashrate*30)
   if ($worker_hashrate -match "[0-9]") {
-    Write-Host $TimeNow : "Worker Hashrate:" $worker_hashrate "H/s, Good Results: $my_results" -ForegroundColor green
+    Write-Host $TimeNow : "Worker Hashrate:" $worker_hashrate "H/s, Good Results: $my_results" -ForegroundColor Green
     
 } else {
         Write-Host $TimeNow : "Waiting on worker to warm up before displaying hashrate." -ForegroundColor Cyan
