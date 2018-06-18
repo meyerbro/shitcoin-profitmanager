@@ -283,7 +283,7 @@ if ($diff_config -eq '4')
 {Set-Variable -Name "fixed_diff" -Value ".$pc"
 }
 
-Write-Host "...Setting Fixed Diff Config to $fixed_diff"
+Write-Host "...Setting Fixed Diff Config to $hashrate"
 
 # Configure the attributes for the mining software.
 $worker_settings = "--poolconf $path\$pc\pools.txt --config $path\config.txt --currency $algo --url $pool --user $wallet$fixed_diff --rigid $pc --pass w=$pc --cpu $path\$pc\cpu.txt --amd $path\$pc\amd.txt --nvidia $path\$pc\nvidia.txt"
@@ -322,7 +322,7 @@ Do {
   $best_coin_check = $get_coin_check.current
   
   Write-host $TimeNow : "Checking Coin Profitability."
-  Write-Host $TimeNow : "Best Coin to Mine:" $best_coin_check
+  Write-Host $TimeNow : "Best Coin to Mine:" $best_coin_check -ForegroundColor DarkYellow
   
   if ($best_coin -eq $best_coin_check) {
   
@@ -335,9 +335,11 @@ Do {
   # Get the current hashrate from mining software
   $get_hashrate = Invoke-RestMethod -Uri "http://127.0.0.1:8080/api.json" -Method Get 
   $worker_hashrate = $get_hashrate.hashrate.total[0]
-  
+  $my_results = $get_hashrate.results.shares_good
+  $suggested_diff = [math]::Round($worker_hashrate*30)
   if ($worker_hashrate -match "[0-9]") {
-    Write-Host $TimeNow : "Worker Hashrate:" $worker_hashrate "H/s" -ForegroundColor Cyan
+    Write-Host $TimeNow : "Worker Hashrate:" $worker_hashrate "H/s, Good Results: $my_results" -ForegroundColor green
+    
 } else {
         Write-Host $TimeNow : "Waiting on worker to warm up before displaying hashrate." -ForegroundColor Cyan
 }
@@ -353,7 +355,7 @@ Add-Type -AssemblyName System.Speech
 $synthesizer = New-Object -TypeName System.Speech.Synthesis.SpeechSynthesizer
 $synthesizer.Speak("$pc is switching to $speak_coin") | Out-Null
 }
-
+Write-Host $TimeNow : "Your fixed difficulty is set to $hashrate, the worker suggests somewhere around: $suggested_diff" -ForegroundColor Magenta 
 Write-Host $TimeNow : "Profitability has changed, switching coins now." -ForegroundColor yellow
 Write-Host $TimeNow : "Shutting down miner, please wait..... "   -ForegroundColor yellow
 
