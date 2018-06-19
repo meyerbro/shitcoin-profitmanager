@@ -46,8 +46,32 @@ $PC = $env:ComputerName
 # Set the fixed difficulty for each computer. The computer name MUST be the exact name as it appears in Windows.
 if ($pc -eq 'GAMINGPC')
 {Set-Variable -Name "hashrate" -Value "4500"
+# Check for AMD.txt file, delete if exists, will create a new one once mining app launches. ***I have some goofy cards that need this file reset or they crash.
+if(Test-Path $path\$pc\amd.txt)
+{
+Write-Host "
+...Purging old AMD.txt file (OK!)" -ForegroundColor green
+del $path\$pc\amd.txt
 }
-
+else
+{
+Write-Host "...Could not find AMD.txt file, there is nothing to delete. (OK!)" -ForegroundColor green
+}
+}
+if ($pc -eq 'MR01')
+{Set-Variable -Name "hashrate" -Value "36000"
+# Check for AMD.txt file, delete if exists, will create a new one once mining app launches. ***I have some goofy cards that need this file reset or they crash.
+if(Test-Path $path\$pc\amd.txt)
+{
+Write-Host "
+...Purging old AMD.txt file (OK!)" -ForegroundColor green
+del $path\$pc\amd.txt
+}
+else
+{
+Write-Host "...Could not find AMD.txt file, there is nothing to delete. (OK!)" -ForegroundColor green
+}
+}
 if ($pc -eq 'MR02')
 {Set-Variable -Name "hashrate" -Value "93000"
 }
@@ -104,6 +128,8 @@ Write-Host "...Creating Folder for $pc" -ForegroundColor yellow
 $fso = new-object -ComObject scripting.filesystemobject
 $fso.CreateFolder("$path\$pc")
 }
+
+
 
 Write-Host "...Best Coin to Mine:" $best_coin
 
@@ -250,11 +276,11 @@ Write-Host "...Authorizing inbound funds to Wallet:"
 Write-Host "   $wallet"
 
 # Check for pools.txt file, delete if exists, will create a new one once mining app launches.
-if(Test-Path $path\pools.txt)
+if(Test-Path $path\$pc\pools.txt)
 {
 Write-Host "
 ...Purging old Pools.txt file (OK!)"
-del $path\pools.txt
+del $path\$pc\pools.txt
 }
 else
 {
@@ -340,7 +366,7 @@ Do {
   $my_results = $get_hashrate.results.shares_good
   $suggested_diff = [math]::Round($worker_hashrate*30)
   if ($worker_hashrate -match "[0-9]") {
-    Write-Host $TimeNow : "Worker Hashrate:" $worker_hashrate "H/s, Good Results: $my_results" -ForegroundColor Green
+    Write-Host $TimeNow : "Worker Hashrate:" $worker_hashrate "H/s, Accepted Shares: $my_results" -ForegroundColor Green
     
 } else {
         Write-Host $TimeNow : "Waiting on worker to warm up before displaying hashrate." -ForegroundColor Cyan
