@@ -45,32 +45,10 @@ $PC = $env:ComputerName
 
 # Set the fixed difficulty for each computer. The computer name MUST be the exact name as it appears in Windows.
 if ($pc -eq 'GAMINGPC')
-{Set-Variable -Name "hashrate" -Value "4500"
-# Check for AMD.txt file, delete if exists, will create a new one once mining app launches. ***I have some goofy cards that need this file reset or they crash.
-if(Test-Path $path\$pc\amd.txt)
-{
-Write-Host "
-...Purging old AMD.txt file (OK!)" -ForegroundColor green
-del $path\$pc\amd.txt
-}
-else
-{
-Write-Host "...Could not find AMD.txt file, there is nothing to delete. (OK!)" -ForegroundColor green
-}
+{Set-Variable -Name "hashrate" -Value "18585"
 }
 if ($pc -eq 'MR01')
 {Set-Variable -Name "hashrate" -Value "36000"
-# Check for AMD.txt file, delete if exists, will create a new one once mining app launches. ***I have some goofy cards that need this file reset or they crash.
-if(Test-Path $path\$pc\amd.txt)
-{
-Write-Host "
-...Purging old AMD.txt file (OK!)" -ForegroundColor green
-del $path\$pc\amd.txt
-}
-else
-{
-Write-Host "...Could not find AMD.txt file, there is nothing to delete. (OK!)" -ForegroundColor green
-}
 }
 if ($pc -eq 'MR02')
 {Set-Variable -Name "hashrate" -Value "93000"
@@ -204,7 +182,7 @@ Set-Variable -Name "miner_type" -Value "xmr-stak"
 Set-Variable -Name "diff_config" -Value "1"
 Set-Variable -Name "algo" -Value "cryptonight_lite_v7"
 Set-Variable -Name "pool" -Value "pool.aeon.hashvault.pro:5555"
-Set-Variable -Name "wallet" -Value "WmsE4nrA3aZaTEW6QKWZiuSuioCmks5fxJeaaFv1DteDb6kFYyVCNP9dwrtcScNiXbPQ9DMXbtrGGg1GThFsbVXJ2VLA8FPHD"
+Set-Variable -Name "wallet" -Value "WmsUAnu5pkM63Q2k9fkBABWFPx8GuAMSNedXBGm8oqV2AThqv5KLFTfNW56tuk4b4UNuJkPTkLuNj8qJ5tkt9va41uv5v8kPY"
 }
 
 if ($best_coin -eq 'XHV')
@@ -338,7 +316,7 @@ write-host "Check Profitiability: $TimeEnd
 
 # If we are mining the default coin, pause for 5 minutes.
 if ($bypass_check -eq 'yes'){
- Write-Host $TimeNow : "Currently mining default coin: $best_coin "": Checking again at $TimeEnd" -ForegroundColor White
+ Write-Host $TimeNow : "Currently mining default coin: $best_coin : Checking again at $TimeEnd" -ForegroundColor White
 Start-Sleep -Seconds $mine_seconds
 }
 
