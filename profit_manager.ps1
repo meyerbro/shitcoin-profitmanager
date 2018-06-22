@@ -43,39 +43,6 @@ $enable_voice = "yes"
 #Pull in the computer name from Windows.
 $PC = $env:ComputerName
 
-# Set the fixed difficulty for each computer. The computer name MUST be the exact name as it appears in Windows.
-if ($pc -eq 'GAMINGPC')
-{Set-Variable -Name "hashrate" -Value "18585"
-}
-if ($pc -eq 'MR01')
-{Set-Variable -Name "hashrate" -Value "36000"
-}
-if ($pc -eq 'MR02')
-{Set-Variable -Name "hashrate" -Value "93000"
-}
-
-if ($pc -eq 'OGPC01')
-{Set-Variable -Name "hashrate" -Value "6100"
-}
-
-if ($pc -eq 'MR03')
-{Set-Variable -Name "hashrate" -Value "114000"
-}
-
-if ($pc -eq 'SERVER')
-{Set-Variable -Name "hashrate" -Value "2400"
-# You can add the following line to disable voice on specifi
-$enable_voice = "no"
-}
-
-if ($pc -eq 'LAPTOPPC01')
-{Set-Variable -Name "hashrate" -Value "300"
-}
-
-if ($pc -eq 'DELLPC01')
-{Set-Variable -Name "hashrate" -Value "1800"
-}
-
 #Pull in the best coin, parse symbol from json.
 $get_coin = Invoke-RestMethod -Uri "https://minecryptonight.net/api/best" -Method Get 
 $best_coin = $get_coin.current
@@ -253,6 +220,21 @@ Write-Host "...Switching Algo to:" $Algo
 Write-Host "...Authorizing inbound funds to Wallet:"
 Write-Host "   $wallet"
 
+# Verify Diff config file is present
+
+If(Test-Path -Path $Path\$pc\$algo.conf)
+{
+  $set_diff_config = "yes"
+  $set_diff_value = Get-Content -Path "$path\$pc\$algo.conf"
+  write-host "...Diffuculty config for $algo is present, setting to $set_diff_value" -ForegroundColor green
+  
+}
+else
+{ 
+  write-host "...No diffuculty config for $algo is present. We will skip setting a fixed difficulty until next run." -ForegroundColor red
+  $set_diff_config = "no"
+}
+
 # Check for pools.txt file, delete if exists, will create a new one once mining app launches.
 if(Test-Path $path\$pc\pools.txt)
 {
@@ -276,20 +258,23 @@ if ($miner_type -eq 'arto-stak')
 Write-Host "...Setting Mining Application to $miner_app"
 
 # This section establishes a fixed diff for each worker. The format depends on which pool you connect to.
+if ($set_diff_config -eq 'yes'){
 if ($diff_config -eq '1')
-{Set-Variable -Name "fixed_diff" -Value "+$hashrate"
+{Set-Variable -Name "fixed_diff" -Value "+$set_diff_value"
 }
 if ($diff_config -eq '2')
-{Set-Variable -Name "fixed_diff" -Value ".$hashrate"
+{Set-Variable -Name "fixed_diff" -Value ".$set_diff_value"
 }
 if ($diff_config -eq '3')
-{Set-Variable -Name "fixed_diff" -Value ".$pc+$hashrate"
+{Set-Variable -Name "fixed_diff" -Value ".$pc+$set_diff_value"
 }
 if ($diff_config -eq '4')
 {Set-Variable -Name "fixed_diff" -Value ".$pc"
 }
-
-Write-Host "...Setting Fixed Diff Config to $hashrate"
+}
+else {
+ Set-Variable -Name "fixed_diff" -Value ""
+}
 
 # Configure the attributes for the mining software.
 $worker_settings = "--poolconf $path\$pc\pools.txt --config $path\config.txt --currency $algo --url $pool --user $wallet$fixed_diff --rigid $pc --pass w=$pc --cpu $path\$pc\cpu.txt --amd $path\$pc\amd.txt --nvidia $path\$pc\nvidia.txt"
@@ -361,7 +346,17 @@ Add-Type -AssemblyName System.Speech
 $synthesizer = New-Object -TypeName System.Speech.Synthesis.SpeechSynthesizer
 $synthesizer.Speak("$pc is switching to $speak_coin") | Out-Null
 }
-Write-Host $TimeNow : "Your fixed difficulty is set to $hashrate, the worker suggests somewhere around: $suggested_diff" -ForegroundColor Magenta 
+If( Test-Path -Path $Path\$pc\$algo.conf )
+{
+    write-host "Diffuculty config for $algo is present, no need to create a new config."
+
+}
+else
+{
+    Write-Host "Creating difficulty config file for $algo on this worker. We've calulated the fixed difficulty to be $suggested_diff" -ForegroundColor Green
+    $suggested_diff | Out-File $path\$pc\$algo.conf
+}
+
 Write-Host $TimeNow : "Profitability has changed, switching coins now." -ForegroundColor yellow
 Write-Host $TimeNow : "Shutting down miner, please wait..... "   -ForegroundColor yellow
 
