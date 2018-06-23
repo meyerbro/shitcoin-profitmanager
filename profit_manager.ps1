@@ -60,6 +60,10 @@ else {
 }
 
 Write-Host "...Activating Worker on $pc"
+Write-Host "...This system has the following GPU's, onboard video will be ignored:" -ForegroundColor Yellow
+foreach ($gpu in Get-WmiObject Win32_VideoController) {
+    Write-Host " -"$gpu.Description -ForegroundColor Yellow
+}
 
 #Check folder structure, create missing folders.
 if (Test-Path $path\$pc -PathType Container) {
