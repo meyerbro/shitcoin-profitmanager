@@ -27,18 +27,16 @@ Write-Host "
 
 $Host.UI.RawUI.WindowTitle = "CryptoNight Profit Manager by BearlyHealz"
 
-# Change path to whatever network drive letter you mapped each computer to.
-$path = "u:"
+# Pull in settings from file
+$get_settings = Get-Content -Path "settings.conf" | Out-String | ConvertFrom-Json
 
 # Set a default coin in the event the application wants to mine a coin that you do not have a wallet for.
-
-$default_coin = "XTL"
-
+$default_coin = $get_settings.default_coin
 # How many minutes do you want the miner to run before checking for a new coin?
-$mine_minutes = 10
+$mine_minutes = $get_settings.mining_timer
 $mine_seconds = ($mine_minutes*60)
-$set_sleep = 60
-$enable_voice = "yes"
+$set_sleep = $get_settings.sleep_seconds
+$enable_voice = $get_settings.voice
 
 #Pull in the computer name from Windows.
 $PC = $env:ComputerName
@@ -48,7 +46,7 @@ $get_coin = Invoke-RestMethod -Uri "https://minecryptonight.net/api/best" -Metho
 $best_coin = $get_coin.current
 
 #list all the coins you plan to mine ----the symbol MUST match.
-$Array = "XTL","XMR","TRTL","GRFT","ITNS","IPBC","TUBE","AEON","XHV","LOKI","ETN","XMV","XRN","ARTO","MSR"
+$Array = $get_settings.my_coins
 
 #Check if the best coin to mine is in your list.
 if ($best_coin -in $Array.ToUpper())
@@ -78,142 +76,14 @@ $fso.CreateFolder("$path\$pc")
 
 Write-Host "...Best Coin to Mine:" $best_coin
 
-# Change my wallet address to YOUR wallets address on each of the following. You can change the pool you use as well; however, refer you will need to change diff_config (bottom of code).
+# Pull in worker config information from settings.conf
 
-if ($best_coin -eq 'XTL')
-{
-Set-Variable -Name "miner_type" -Value "xmr-stak"
-Set-Variable -Name "diff_config" -Value "2"
-Set-Variable -Name "algo" -Value "Stellite"
-Set-Variable -Name "pool" -Value "stellite.ingest.cryptoknight.cc:16222"
-Set-Variable -Name "wallet" -Value "Se2vEmzaPTGBieSKQvinp6QdQHYTCvacABsxp5GtMhkjgMAb8QJnvsaQ1jWtUwvYMneuLfuz6iygaD3zM6kt5nq22RqYLh1FK"
-}
-
-if ($best_coin -eq 'XMR')
-{
-Set-Variable -Name "miner_type" -Value "xmr-stak"
-Set-Variable -Name "diff_config" -Value "1"
-Set-Variable -Name "algo" -Value "monero7"
-Set-Variable -Name "pool" -Value "pool.supportxmr.com:5555"
-Set-Variable -Name "wallet" -Value "43u7KBue9bKBpCbihpwFWCbj44gkLLi9o9vUG4skf7qMY8vKQD51MZ6JBBRxQ1WvTXNc93joBQXutK5kznKY4UQRJaXDXcb"
-}
-
-if ($best_coin -eq 'TRTL')
-{
-Set-Variable -Name "miner_type" -Value "xmr-stak"
-Set-Variable -Name "diff_config" -Value "2"
-Set-Variable -Name "algo" -Value "cryptonight_lite_v7"
-Set-Variable -Name "pool" -Value "trtl.pool.mine2gether.com:1115"
-Set-Variable -Name "wallet" -Value "TRTLuyjPitkPVZB82QMh3nAj2hpgUfVz6QrkQWg9aLUmCUMDEaZBAoLSAyDLXDPH5N1bDRKnj6f6Ea1kjUAm7fHf5azmJAbkB6W"
-}
-
-if ($best_coin -eq 'GRFT')
-{
-Set-Variable -Name "miner_type" -Value "xmr-stak"
-Set-Variable -Name "diff_config" -Value "1"
-Set-Variable -Name "algo" -Value "monero7"
-Set-Variable -Name "pool" -Value "pool.graft.hashvault.pro:5555"
-Set-Variable -Name "wallet" -Value "G9H3Q62zqznBi2xRNM994vE7p6TMsswZcTCFXkGD1A8QTHVUVK9kbopEXHiUG63JhBKS2HFd4rnjniXQgM1iTntN4YEpvN4"
-}
-
-if ($best_coin -eq 'ITNS')
-{
-Set-Variable -Name "miner_type" -Value "xmr-stak"
-Set-Variable -Name "diff_config" -Value "1"
-Set-Variable -Name "algo" -Value "intense"
-Set-Variable -Name "pool" -Value "pool.intense.hashvault.pro:80"
-Set-Variable -Name "wallet" -Value "iz5ey7qTRzX4X4tdnjo5YZaLgH48iDvoSBtntRdXmZZHZ9HcqekWxPwauHzgUZBWpZLRXRcYLJy756k893AVPZz13CMprdqHn"
-}
-
-if ($best_coin -eq 'IPBC')
-{
-Set-Variable -Name "miner_type" -Value "xmr-stak"
-Set-Variable -Name "diff_config" -Value "2"
-Set-Variable -Name "algo" -Value "ipbc"
-Set-Variable -Name "pool" -Value "mining.bit.tube:15555"
-Set-Variable -Name "wallet" -Value "bxcdyMoQzF8SvfN9KmbS27JB9TPAZYFrnTPkzvAtXcRvBpEV68DJXiW3v5bz827MfJQfvu9mYSLmXFoCdHWwy3Rh2wvidvFBr"
-}
-
-if ($best_coin -eq 'TUBE')
-{
-Set-Variable -Name "miner_type" -Value "xmr-stak"
-Set-Variable -Name "diff_config" -Value "2"
-Set-Variable -Name "algo" -Value "ipbc"
-Set-Variable -Name "pool" -Value "mining.bit.tube:15555"
-Set-Variable -Name "wallet" -Value "bxcdyMoQzF8SvfN9KmbS27JB9TPAZYFrnTPkzvAtXcRvBpEV68DJXiW3v5bz827MfJQfvu9mYSLmXFoCdHWwy3Rh2wvidvFBr"
-}
-
-if ($best_coin -eq 'AEON')
-{
-Set-Variable -Name "miner_type" -Value "xmr-stak"
-Set-Variable -Name "diff_config" -Value "1"
-Set-Variable -Name "algo" -Value "cryptonight_lite_v7"
-Set-Variable -Name "pool" -Value "pool.aeon.hashvault.pro:5555"
-Set-Variable -Name "wallet" -Value "WmsUAnu5pkM63Q2k9fkBABWFPx8GuAMSNedXBGm8oqV2AThqv5KLFTfNW56tuk4b4UNuJkPTkLuNj8qJ5tkt9va41uv5v8kPY"
-}
-
-if ($best_coin -eq 'XHV')
-{
-Set-Variable -Name "miner_type" -Value "xmr-stak"
-Set-Variable -Name "diff_config" -Value "2"
-Set-Variable -Name "algo" -Value "haven"
-Set-Variable -Name "pool" -Value "haven.miner.rocks:5555"
-Set-Variable -Name "wallet" -Value "hvxyG9JkYPk36PAdQZkZi8M4MLLRnzS1yYLc5PzMoHwuVdUHKqdio2h5oRCK3Kuiyh1bmF41NgK5LeqMhLmWPVyd6s6GY9GfSe"
-}
-
-if ($best_coin -eq 'LOKI')
-{
-Set-Variable -Name "miner_type" -Value "xmr-stak"
-Set-Variable -Name "diff_config" -Value "2"
-Set-Variable -Name "algo" -Value "cryptonight_heavy"
-Set-Variable -Name "pool" -Value "haven.miner.rocks:5555"
-Set-Variable -Name "wallet" -Value "L8uVMY7dgY1Mj32ok3hWBthyamfvYvYSBFgCmWAEbUsgPZ1i8v1jj44KW4GsFXQC2jA8TwKcbfsT32bzZHvGfueA31owMKL"
-}
-
-if ($best_coin -eq 'ETN')
-{
-Set-Variable -Name "miner_type" -Value "xmr-stak"
-Set-Variable -Name "diff_config" -Value "1"
-Set-Variable -Name "algo" -Value "cryptonight_v7"
-Set-Variable -Name "pool" -Value "pool.electroneum.hashvault.pro:5555"
-Set-Variable -Name "wallet" -Value "etnkBeof5ekf2gXnPiFP2w6aGLiVg2qkuVArAVmRaPNAVj12MGLD6UuBdWmWVLTTtqNNugUBsCuS13QxV6n6a3xx2DC7ZsZV1g"
-}
-
-if ($best_coin -eq 'XMV')
-{
-Set-Variable -Name "miner_type" -Value "xmr-stak"
-Set-Variable -Name "diff_config" -Value "1"
-Set-Variable -Name "algo" -Value "cryptonight_v7"
-Set-Variable -Name "pool" -Value "xmv-us-west.leafpool.com:9992"
-Set-Variable -Name "wallet" -Value "43u7KBue9bKBpCbihpwFWCbj44gkLLi9o9vUG4skf7qMY8vKQD51MZ6JBBRxQ1WvTXNc93joBQXutK5kznKY4UQRJaXDXcb"
-}
-
-if ($best_coin -eq 'XRN')
-{
-Set-Variable -Name "miner_type" -Value "xmr-stak"
-Set-Variable -Name "diff_config" -Value "2"
-Set-Variable -Name "algo" -Value "cryptonight_heavy"
-Set-Variable -Name "pool" -Value "saronite.miner.rocks:5555"
-Set-Variable -Name "wallet" -Value "P2PPcpdAPNR2aKfitjoiFDTJ3qfpzrHv8BcVZnRsAZzn75eMS8CyXrHg8F3BhKsrGZQ57qXVxYs9tjEN6BLjpc6SARMc4bBwAU"
-}
-
-if ($best_coin -eq 'ARTO')
-{
-Set-Variable -Name "miner_type" -Value "arto-stak"
-Set-Variable -Name "diff_config" -Value "1"
-Set-Variable -Name "algo" -Value "arto"
-Set-Variable -Name "pool" -Value "pool.arto.cash:5555"
-Set-Variable -Name "wallet" -Value "AEpJ4vaYUQVGjVVGeemF6mhTY4hu1GUChNr3RzdAe2oqYLaAZjprJE4df1s5bV9QuWboehuuM3JirQN8nKiA2wgQJEpX96"
-}
-
-if ($best_coin -eq 'MSR')
-{
-Set-Variable -Name "miner_type" -Value "xmr-stak"
-Set-Variable -Name "diff_config" -Value "1"
-Set-Variable -Name "algo" -Value "masari"
-Set-Variable -Name "pool" -Value "pool.masaricoin.com:7777"
-Set-Variable -Name "wallet" -Value "5pJLM5hVyASHgC5m1h7axDVNdharEC48dcEmMDNdDTbtVWsj3x7fN5EBc5o5drxQD5C4GAb2hU6CrTQXKfe9yZGyFVyippc"
-}
+$symbol = $get_settings.mining_params | Where-Object { $_.Symbol -like $best_coin } | Select -ExpandProperty symbol
+$miner_type = $get_settings.mining_params | Where-Object { $_.Symbol -like $best_coin } | Select -ExpandProperty software
+$diff_config = $get_settings.mining_params | Where-Object { $_.Symbol -like $best_coin } | Select -ExpandProperty static_param
+$algo = $get_settings.mining_params | Where-Object { $_.Symbol -like $best_coin } | Select -ExpandProperty algo
+$pool = $get_settings.mining_params | Where-Object { $_.Symbol -like $best_coin } | Select -ExpandProperty pool
+$wallet = $get_settings.mining_params | Where-Object { $_.Symbol -like $best_coin } | Select -ExpandProperty wallet
 
 Write-Host "...Establishing connection to:" $pool
 Write-Host "...Switching Algo to:" $Algo
