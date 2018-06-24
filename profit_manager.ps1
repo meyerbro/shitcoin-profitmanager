@@ -38,7 +38,7 @@ $path = $get_settings.path
 $default_coin = $get_settings.default_coin
 # How many minutes do you want the miner to run before checking for a new coin?
 $mine_minutes = $get_settings.mining_timer
-$mine_seconds = ($mine_minutes * 60)
+$mine_seconds = $mine_seconds = [int]$get_settings.mining_timer*[int]60
 $set_sleep = $get_settings.sleep_seconds
 $enable_voice = $get_settings.voice
 
@@ -49,14 +49,14 @@ $PC = $env:ComputerName
 $get_coin = Invoke-RestMethod -Uri "https://minecryptonight.net/api/best" -Method Get 
 $best_coin = $get_coin.current
 
-#list all the coins you plan to mine ----the symbol MUST match.
+#list all the coins you plan to mine.
 $Array = $get_settings.my_coins
 
 #Check if the best coin to mine is in your list.
 if ($best_coin -in $Array.ToUpper())
 {}
 else {
-    Write-Host "The best coin to mine is $best_coin but it's not in your list." -ForegroundColor red
+    Write-Host "...The best coin to mine is $best_coin but it's not in your list." -ForegroundColor red
     #Choose a default coin to mine if one of the coins listed above is NOT in your list. Prevents the miner from closing when there isn't a match.
     $best_coin = $default_coin
     $bypass_check = "yes"
