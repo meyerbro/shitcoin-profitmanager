@@ -176,7 +176,7 @@ write-host "Check Profitiability: $TimeEnd
 # If we are mining the default coin, pause for 5 minutes.
 if ($bypass_check -eq 'yes') {
     Write-Host $TimeNow : "Currently mining default coin: $best_coin : Checking again at $TimeEnd" -ForegroundColor White
-    Start-Sleep -Seconds $mine_seconds
+    Start-Sleep -Seconds 600
 }
 
 # Begin a loop to check if the current coin is the best coin to mine. If not, restart the app and switchin coins.
