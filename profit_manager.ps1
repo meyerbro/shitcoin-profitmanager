@@ -31,6 +31,9 @@ $Host.UI.RawUI.WindowTitle = "CryptoNight Profit Manager by BearlyHealz"
 # Pull in settings from file
 $get_settings = Get-Content -Path "settings.conf" | Out-String | ConvertFrom-Json
 
+# Set path parameter
+$path = $get_settings.path
+
 # Set a default coin in the event the application wants to mine a coin that you do not have a wallet for.
 $default_coin = $get_settings.default_coin
 # How many minutes do you want the miner to run before checking for a new coin?
