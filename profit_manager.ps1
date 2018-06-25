@@ -225,11 +225,11 @@ if ($enable_voice -eq 'yes') {
     $synthesizer.Speak("$pc is switching to $speak_coin") | Out-Null
 }
 If ( Test-Path -Path $Path\$pc\$algo.conf ) {
-    write-host "Diffuculty config for $algo is present, no need to create a new config." -ForegroundColor Green
+    write-host $TimeNow : "Diffuculty config for $algo is present, no need to create a new config." -ForegroundColor Green
 
 }
 else {
-    Write-Host "Creating difficulty config file for $algo on this worker. We've calulated the fixed difficulty to be $suggested_diff" -ForegroundColor Green
+    Write-Host $TimeNow : "Creating difficulty config file for $algo on this worker. We've calulated the fixed difficulty to be $suggested_diff" -ForegroundColor Green
     $suggested_diff | Out-File $path\$pc\$algo.conf
 }
 
