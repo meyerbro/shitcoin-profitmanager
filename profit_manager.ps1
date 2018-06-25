@@ -238,7 +238,7 @@ if ($bypass_check -eq 'no') {
 Write-Host $TimeNow : "Profitability has changed, switching coins now." -ForegroundColor yellow
 }
 else {
-    Write-Host $TimeNow : "$best_coin is not in your list of coins to mine, waiting another $mine_minutes." -ForegroundColor yellow
+    Write-Host $TimeNow : "$best_coin_check is not in your list of coins to mine, waiting another $mine_minutes." -ForegroundColor yellow
     Start-Sleep -Seconds $mine_seconds
 }
 Write-Host $TimeNow : "Shutting down miner, please wait..... "   -ForegroundColor yellow
