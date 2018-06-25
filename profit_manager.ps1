@@ -238,13 +238,13 @@ if ($bypass_check -eq 'no') {
 Write-Host $TimeNow : "Profitability has changed, switching coins now." -ForegroundColor yellow
 }
 else {
-    Write-Host $TimeNow : "$best_coin_check is not in your list of coins to mine, waiting another $mine_minutes." -ForegroundColor yellow
+    Write-Host $TimeNow : "$best_coin_check is not in your list of coins to mine, mining $best_coin for another $mine_minutes minutes." -ForegroundColor yellow
     Start-Sleep -Seconds $mine_seconds
 }
 Write-Host $TimeNow : "Shutting down miner, please wait..... "   -ForegroundColor yellow
 
 # Stop the mining software.
-Stop-Process -Name $miner_type
+Stop-Process -Name $miner_type -Force
 
 # Sleep for 8 seconds to give the mining software enough time to stop. Adjust this higher or lower depending on your system stability.
 Start-Sleep -s 8
