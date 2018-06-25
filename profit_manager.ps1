@@ -42,6 +42,8 @@ $mine_seconds = $mine_seconds = [int]$get_settings.mining_timer*[int]60
 $set_sleep = $get_settings.sleep_seconds
 $enable_voice = $get_settings.voice
 
+$bypass_check = "no"
+
 #Pull in the computer name from Windows.
 $PC = $env:ComputerName
 
@@ -176,7 +178,7 @@ write-host "Check Profitiability: $TimeEnd
 # If we are mining the default coin, pause for 5 minutes.
 if ($bypass_check -eq 'yes') {
     Write-Host $TimeNow : "Currently mining default coin: $best_coin : Checking again at $TimeEnd" -ForegroundColor White
-    Start-Sleep -Seconds 600
+    Start-Sleep -Seconds $mine_seconds
 }
 
 # Begin a loop to check if the current coin is the best coin to mine. If not, restart the app and switchin coins.
@@ -223,7 +225,7 @@ if ($enable_voice -eq 'yes') {
     $synthesizer.Speak("$pc is switching to $speak_coin") | Out-Null
 }
 If ( Test-Path -Path $Path\$pc\$algo.conf ) {
-    write-host "Diffuculty config for $algo is present, no need to create a new config."
+    write-host "Diffuculty config for $algo is present, no need to create a new config." -ForegroundColor Green
 
 }
 else {
@@ -231,7 +233,13 @@ else {
     $suggested_diff | Out-File $path\$pc\$algo.conf
 }
 
+if ($bypass_check -eq 'no') {
 Write-Host $TimeNow : "Profitability has changed, switching coins now." -ForegroundColor yellow
+}
+else {
+    Write-Host $TimeNow : "$best_coin is not in your list of coins to mine, waiting another $mine_minutes." -ForegroundColor yellow
+    Start-Sleep -Seconds $mine_seconds
+}
 Write-Host $TimeNow : "Shutting down miner, please wait..... "   -ForegroundColor yellow
 
 # Stop the mining software.
