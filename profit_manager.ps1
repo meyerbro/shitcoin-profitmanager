@@ -177,6 +177,7 @@ write-host "Check Profitiability: $TimeEnd
 
 # If we are mining the default coin, pause for 5 minutes.
 if ($bypass_check -eq 'yes') {
+    $TimeNow = Get-Date
     Write-Host $TimeNow : "Currently mining default coin: $best_coin : Checking again at $TimeEnd" -ForegroundColor White
     Start-Sleep -Seconds $mine_seconds
 }
