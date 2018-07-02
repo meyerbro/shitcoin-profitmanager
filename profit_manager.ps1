@@ -26,7 +26,7 @@ Write-Host "
 "
 
 
-$Host.UI.RawUI.WindowTitle = "CryptoNight Profit Manager by BearlyHealz"
+$Host.UI.RawUI.WindowTitle = "CryptoNight Profit Manager by BearlyHealz v3.0.3"
 
 # Pull in settings from file
 $get_settings = Get-Content -Path "settings.conf" | Out-String | ConvertFrom-Json
@@ -129,6 +129,9 @@ if ($miner_type -eq 'xmr-stak') {
 }
 if ($miner_type -eq 'arto-stak') {
     Set-Variable -Name "miner_app" -Value "$path\Miner-ArtoMiner\arto-miner.exe"
+}
+if ($miner_type -eq 'tube-stak') {
+    Set-Variable -Name "miner_app" -Value "$path\Miner-Bittube\bittube-miner.exe"
 }
 
 Write-Host "...Setting Mining Application to $miner_app"
