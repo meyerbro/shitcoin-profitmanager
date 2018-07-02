@@ -26,7 +26,7 @@ Write-Host "
 "
 
 
-$Host.UI.RawUI.WindowTitle = "CryptoNight Profit Manager by BearlyHealz v3.0.3"
+$Host.UI.RawUI.WindowTitle = "CryptoNight Profit Manager by BearlyHealz v3.1.1"
 
 # Pull in settings from file
 $get_settings = Get-Content -Path "settings.conf" | Out-String | ConvertFrom-Json
