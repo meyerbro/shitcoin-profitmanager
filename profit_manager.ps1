@@ -130,7 +130,7 @@ if ($miner_type -eq 'xmr-stak') {
 if ($miner_type -eq 'arto-stak') {
     Set-Variable -Name "miner_app" -Value "$path\Miner-ArtoMiner\arto-miner.exe"
 }
-if ($miner_type -eq 'tube-stak') {
+if ($miner_type -eq 'bittube-miner.exe') {
     Set-Variable -Name "miner_app" -Value "$path\Miner-Bittube\bittube-miner.exe"
 }
 
