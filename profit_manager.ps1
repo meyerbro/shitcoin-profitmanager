@@ -165,7 +165,7 @@ $get_coin_check = Invoke-RestMethod -Uri "https://minecryptonight.net/api/best" 
 $best_coin_check = $get_coin_check.current
 
 # Start the mining software, wait for the process to begin.
-start-process -FilePath $miner_app -args $worker_settings -WindowStyle Minimized -Wait
+start-process -FilePath $miner_app -args $worker_settings -WindowStyle Minimized
 $TimeNow = Get-Date
 if ($miner_app -eq $null) { Do {write-host $timenow : "Waiting for worker to start...." -ForegroundColor Yellow } until($miner_app -eq $True)}
 # Establish the date and time
