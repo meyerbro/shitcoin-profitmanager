@@ -38,7 +38,7 @@ $path = $get_settings.path
 $default_coin = $get_settings.default_coin
 # How many minutes do you want the miner to run before checking for a new coin?
 $mine_minutes = $get_settings.mining_timer
-$mine_seconds = $mine_seconds = [int]$get_settings.mining_timer*[int]60
+$mine_seconds = $mine_seconds = [int]$get_settings.mining_timer * [int]60
 $set_sleep = $get_settings.sleep_seconds
 $enable_voice = $get_settings.voice
 
@@ -67,7 +67,7 @@ else {
 Write-Host "...Activating Worker on $pc"
 
 # Get information about the GPU, print to screen
-Write-Host "...This system has the following GPU's, onboard video will be ignored:" -ForegroundColor Yellow
+Write-Host "...This system has the following GPU's:" -ForegroundColor Yellow
 foreach ($gpu in Get-WmiObject Win32_VideoController) {
     Write-Host "  "$gpu.Description
 }
@@ -164,9 +164,10 @@ Write-Host "...Starting $miner_type in another window."
 $get_coin_check = Invoke-RestMethod -Uri "https://minecryptonight.net/api/best" -Method Get
 $best_coin_check = $get_coin_check.current
 
-# Start the mining software.
-start-process -FilePath $miner_app -args $worker_settings -WindowStyle Minimized
-
+# Start the mining software, wait for the process to begin.
+start-process -FilePath $miner_app -args $worker_settings -WindowStyle Minimized -Wait
+$TimeNow = Get-Date
+if ($miner_app -eq $null) { Do {write-host $timenow : "Waiting for worker to start...." -ForegroundColor Yellow } until($miner_app -eq $True)}
 # Establish the date and time
 $TimeStart = Get-Date
 # Mine for established time, then look to see if there's a new coin.
@@ -204,7 +205,20 @@ Do {
   
         Write-Host $TimeNow : "Currently mining $best_coin : Checking again at $TimeEnd."
     }
-    # Get the current hashrate from mining software
+    # Check if worker url is working, then get the current hashrate from mining software
+    $HTTP_Request = [System.Net.WebRequest]::Create('http://127.0.0.1:8080/api.json')
+    $HTTP_Response = $HTTP_Request.GetResponse()
+    $HTTP_Status = [int]$HTTP_Response.StatusCode
+
+    If ($HTTP_Status -eq 200) {
+    }
+    Else {
+        Write-Host $TimeNow : "Worker is taking a little longer than expected to start." -ForegroundColor Yellow
+        Start-Sleep -Seconds $set_sleep
+    }
+    $HTTP_Response.Close()
+
+
     $get_hashrate = Invoke-RestMethod -Uri "http://127.0.0.1:8080/api.json" -Method Get 
     $worker_hashrate = $get_hashrate.hashrate.total[0]
     $my_results = $get_hashrate.results.shares_good
@@ -238,7 +252,7 @@ else {
 }
 
 if ($bypass_check -eq 'no') {
-Write-Host $TimeNow : "Profitability has changed, switching coins now." -ForegroundColor yellow
+    Write-Host $TimeNow : "Profitability has changed, switching coins now." -ForegroundColor yellow
 }
 else {
     Write-Host $TimeNow : "$best_coin_check is not in your list of coins to mine, mining $best_coin for another $mine_minutes minutes." -ForegroundColor yellow
@@ -249,8 +263,8 @@ Write-Host $TimeNow : "Shutting down miner, please wait..... "   -ForegroundColo
 # Stop the mining software.
 Stop-Process -Name $miner_type -Force
 
-# Sleep for 8 seconds to give the mining software enough time to stop. Adjust this higher or lower depending on your system stability.
-Start-Sleep -s 8
+# Wait for the executable to stop before continuing.
+$miner_type.WaitForExit()
 
 #The miner will reload the Powershell file. You can make changes while it's running, and they will be applied on reload.
 .\profit_manager.ps1
