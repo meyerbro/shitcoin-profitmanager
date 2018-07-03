@@ -166,8 +166,14 @@ $best_coin_check = $get_coin_check.current
 
 # Start the mining software, wait for the process to begin.
 start-process -FilePath $miner_app -args $worker_settings -WindowStyle Minimized
+Start-Sleep -Seconds 2
 $TimeNow = Get-Date
-if ($miner_app -eq $null) { Do {write-host $timenow : "Waiting for worker to start...." -ForegroundColor Yellow } until($miner_app -eq $True)}
+$check_worker_running = Get-Process $miner_type -ErrorAction SilentlyContinue
+if ($check_worker_running -eq $null) { Do {
+    write-host $timenow : "Waiting for worker to start...." -ForegroundColor Yellow
+    Start-Sleep -Seconds 5
+    $check_worker_running = Get-Process $miner_type -ErrorAction SilentlyContinue
+} until($check_worker_running -eq $True)  }
 # Establish the date and time
 $TimeStart = Get-Date
 # Mine for established time, then look to see if there's a new coin.
