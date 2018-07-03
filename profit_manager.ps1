@@ -264,7 +264,17 @@ Write-Host $TimeNow : "Shutting down miner, please wait..... "   -ForegroundColo
 Stop-Process -Name $miner_type -Force
 
 # Wait for the executable to stop before continuing.
-$miner_type.WaitForExit()
+$worker_running = Get-Process $miner_type -ErrorAction SilentlyContinue
+if ($worker_running) {
+  # try gracefully first
+  $worker_running.CloseMainWindow()
+  # kill after five seconds
+  Sleep 5
+  if (!$worker_running.HasExited) {
+    $worker_running | Stop-Process -Force
+  }
+}
+Remove-Variable worker_running
 
 #The miner will reload the Powershell file. You can make changes while it's running, and they will be applied on reload.
 .\profit_manager.ps1
