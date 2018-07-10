@@ -10,6 +10,7 @@ Set-WindowSize 120 50
 
 Write-Host "
                 _______________________________________________________________________________________
+                              
                 Shitcoin-Profit Manager created by Bearlyhealz. Free to use, donations kindly accepted. 
 
                 ETH Address: 0xA58B04A5Dc2F3934cB54E087b927268836Ac0159
@@ -41,7 +42,7 @@ $mine_seconds = $mine_seconds = [int]$get_settings.mining_timer * [int]60
 $set_sleep = $get_settings.sleep_seconds
 $enable_voice = $get_settings.voice
 $static_mode = $get_settings.static_mode
-
+$bypass_check = "no"
 #Pull in the computer name from Windows.
 $PC = $env:ComputerName
 
