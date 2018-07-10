@@ -41,15 +41,25 @@ $mine_minutes = $get_settings.mining_timer
 $mine_seconds = $mine_seconds = [int]$get_settings.mining_timer * [int]60
 $set_sleep = $get_settings.sleep_seconds
 $enable_voice = $get_settings.voice
+$static_mode = $get_settings.static_mode
 
-$bypass_check = "no"
+
 
 #Pull in the computer name from Windows.
 $PC = $env:ComputerName
 
 #Pull in the best coin, parse symbol from json.
 $get_coin = Invoke-RestMethod -Uri "https://minecryptonight.net/api/best" -Method Get 
-$best_coin = $get_coin.current
+
+if ($static_mode -eq "yes"){
+    $best_coin = $default_coin
+    $bypass_check = "yes"
+}
+else {
+    $best_coin = $get_coin.current
+    $bypass_check = "no"
+}
+
 
 #list all the coins you plan to mine.
 $Array = $get_settings.my_coins
