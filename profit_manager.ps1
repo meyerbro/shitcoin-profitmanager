@@ -25,8 +25,7 @@ Write-Host "
 
 "
 
-
-$Host.UI.RawUI.WindowTitle = "CryptoNight Profit Manager by BearlyHealz v3.2.0"
+$Host.UI.RawUI.WindowTitle = "CryptoNight Profit Manager by BearlyHealz v3.3.0"
 
 # Pull in settings from file
 $get_settings = Get-Content -Path "settings.conf" | Out-String | ConvertFrom-Json
@@ -43,21 +42,19 @@ $set_sleep = $get_settings.sleep_seconds
 $enable_voice = $get_settings.voice
 $static_mode = $get_settings.static_mode
 
-
-
 #Pull in the computer name from Windows.
 $PC = $env:ComputerName
 
 #Pull in the best coin, parse symbol from json.
 $get_coin = Invoke-RestMethod -Uri "https://minecryptonight.net/api/best" -Method Get 
 
-if ($static_mode -eq "yes"){
+# Set mode variables for best coin
+
+if ($static_mode -eq "yes") {
     $best_coin = $default_coin
-    $bypass_check = "yes"
 }
 else {
     $best_coin = $get_coin.current
-    $bypass_check = "no"
 }
 
 
@@ -98,12 +95,13 @@ Write-Host "...Best Coin to Mine:" $best_coin
 
 # Pull in worker config information from settings.conf
 
-$symbol = $get_settings.mining_params | Where-Object { $_.Symbol -like $best_coin } | Select -ExpandProperty symbol
-$miner_type = $get_settings.mining_params | Where-Object { $_.Symbol -like $best_coin } | Select -ExpandProperty software
-$diff_config = $get_settings.mining_params | Where-Object { $_.Symbol -like $best_coin } | Select -ExpandProperty static_param
-$algo = $get_settings.mining_params | Where-Object { $_.Symbol -like $best_coin } | Select -ExpandProperty algo
-$pool = $get_settings.mining_params | Where-Object { $_.Symbol -like $best_coin } | Select -ExpandProperty pool
-$wallet = $get_settings.mining_params | Where-Object { $_.Symbol -like $best_coin } | Select -ExpandProperty wallet
+$symbol = $get_settings.mining_params | Where-Object { $_.Symbol -like $best_coin } | Select-Object -ExpandProperty symbol
+$miner_type = $get_settings.mining_params | Where-Object { $_.Symbol -like $best_coin } | Select-Object -ExpandProperty software
+$diff_config = $get_settings.mining_params | Where-Object { $_.Symbol -like $best_coin } | Select-Object -ExpandProperty static_param
+$algo = $get_settings.mining_params | Where-Object { $_.Symbol -like $best_coin } | Select-Object -ExpandProperty algo
+$pool = $get_settings.mining_params | Where-Object { $_.Symbol -like $best_coin } | Select-Object -ExpandProperty pool
+$wallet = $get_settings.mining_params | Where-Object { $_.Symbol -like $best_coin } | Select-Object -ExpandProperty wallet
+$amd_config_file = $get_settings.mining_params | Where-Object { $_.Symbol -like $best_coin } | Select-Object -ExpandProperty amd_config_file
 
 Write-Host "...Establishing connection to:" $pool
 Write-Host "...Switching Algo to:" $Algo
@@ -166,24 +164,37 @@ else {
 }
 
 # Configure the attributes for the mining software.
-$worker_settings = "--poolconf $path\$pc\pools.txt --config $path\config.txt --currency $algo --url $pool --user $wallet$fixed_diff --rigid $pc --pass w=$pc --cpu $path\$pc\cpu.txt --amd $path\$pc\amd.txt --nvidia $path\$pc\nvidia.txt"
+$worker_settings = "--poolconf $path\$pc\pools.txt --config $path\config.txt --currency $algo --url $pool --user $wallet$fixed_diff --rigid $pc --pass w=$pc --cpu $path\$pc\cpu.txt --amd $path\$pc\$amd_config_file --nvidia $path\$pc\nvidia.txt"
 
 Write-Host "...Starting $miner_type in another window."
 
+# Check to see if this is the best coin to mine
 
 $get_coin_check = Invoke-RestMethod -Uri "https://minecryptonight.net/api/best" -Method Get
-$best_coin_check = $get_coin_check.current
+
+# Edit for adding static mining
+
+if ($static_mode -eq "yes") {
+    $best_coin_check = $default_coin
+}
+else {
+    $best_coin_check = $get_coin_check.current
+}
+
+
 
 # Start the mining software, wait for the process to begin.
 start-process -FilePath $miner_app -args $worker_settings -WindowStyle Minimized
 Start-Sleep -Seconds 2
 $TimeNow = Get-Date
 $check_worker_running = Get-Process $miner_type -ErrorAction SilentlyContinue
-if ($check_worker_running -eq $null) { Do {
-    write-host $timenow : "Waiting for worker to start...." -ForegroundColor Yellow
-    Start-Sleep -Seconds 5
-    $check_worker_running = Get-Process $miner_type -ErrorAction SilentlyContinue
-} until($check_worker_running -eq $True)  }
+if ($check_worker_running -eq $null) {
+    Do {
+        write-host $timenow : "Waiting for worker to start...." -ForegroundColor Yellow
+        Start-Sleep -Seconds 5
+        $check_worker_running = Get-Process $miner_type -ErrorAction SilentlyContinue
+    } until($check_worker_running -eq $True)  
+}
 # Establish the date and time
 $TimeStart = Get-Date
 # Mine for established time, then look to see if there's a new coin.
@@ -207,7 +218,15 @@ Do {
     $TimeNow = Get-Date
     if ($TimeNow -ge $TimeEnd) {
         $get_coin_check = Invoke-RestMethod -Uri "https://minecryptonight.net/api/best" -Method Get
-        $best_coin_check = $get_coin_check.current
+
+        # Edit for adding static mining
+
+if ($static_mode -eq "yes") {
+    $best_coin_check = $default_coin
+}
+else {
+    $best_coin_check = $get_coin_check.current
+}
   
         Write-host $TimeNow : "Checking Coin Profitability."
         Write-Host $TimeNow : "Best Coin to Mine:" $best_coin_check -ForegroundColor Yellow
@@ -263,7 +282,8 @@ If ( Test-Path -Path $Path\$pc\$algo.conf ) {
 
 }
 else {
-    Write-Host $TimeNow : "Creating difficulty config file for $algo on this worker. We've calulated the fixed difficulty to be $suggested_diff" -ForegroundColor Green
+    Write-Host $TimeNow : "Creating difficulty config file for $algo on this worker." -ForegroundColor Green
+    Write-Host $TimeNow : "We've calulated the fixed difficulty to be $suggested_diff ." -ForegroundColor Green
     $suggested_diff | Out-File $path\$pc\$algo.conf
 }
 
@@ -271,7 +291,7 @@ if ($bypass_check -eq 'no') {
     Write-Host $TimeNow : "Profitability has changed, switching coins now." -ForegroundColor yellow
 }
 else {
-    Write-Host $TimeNow : "$best_coin_check is not in your list of coins to mine, mining $best_coin for another $mine_minutes minutes." -ForegroundColor yellow
+    Write-Host $TimeNow : "Mining $best_coin for another $mine_minutes minutes." -ForegroundColor yellow
     Start-Sleep -Seconds $mine_seconds
 }
 Write-Host $TimeNow : "Shutting down miner, please wait..... "   -ForegroundColor yellow
@@ -282,13 +302,13 @@ Stop-Process -Name $miner_type -Force
 # Wait for the executable to stop before continuing.
 $worker_running = Get-Process $miner_type -ErrorAction SilentlyContinue
 if ($worker_running) {
-  # try gracefully first
-  $worker_running.CloseMainWindow()
-  # kill after five seconds
-  Sleep 5
-  if (!$worker_running.HasExited) {
-    $worker_running | Stop-Process -Force
-  }
+    # try gracefully first
+    $worker_running.CloseMainWindow()
+    # kill after five seconds
+    Sleep 5
+    if (!$worker_running.HasExited) {
+        $worker_running | Stop-Process -Force
+    }
 }
 Remove-Variable worker_running
 
