@@ -26,7 +26,7 @@ Write-Host "
 
 "
 
-$Host.UI.RawUI.WindowTitle = "CryptoNight Profit Manager by BearlyHealz v3.3.0"
+$Host.UI.RawUI.WindowTitle = "CryptoNight Profit Manager by BearlyHealz v3.4.0"
 
 # Pull in settings from file
 $get_settings = Get-Content -Path "settings.conf" | Out-String | ConvertFrom-Json
@@ -43,6 +43,9 @@ $set_sleep = $get_settings.sleep_seconds
 $enable_voice = $get_settings.voice
 $static_mode = $get_settings.static_mode
 $bypass_check = "no"
+$config = "config.txt"
+$ignore_httpd = "no"
+
 #Pull in the computer name from Windows.
 $PC = $env:ComputerName
 
@@ -72,7 +75,7 @@ else {
     $bypass_check = "yes"
 }
 
-Write-Host "...Activating Worker on $pc"
+Write-Host "...Activating Worker on [ $pc ]"
 
 # Get information about the GPU, print to screen
 Write-Host "...This system has the following GPU's:" -ForegroundColor Yellow
@@ -92,7 +95,7 @@ else {
 
 
 
-Write-Host "...Best Coin to Mine:" $best_coin
+Write-Host "...Configured to Mine:" $best_coin
 
 # Pull in worker config information from settings.conf
 
@@ -142,6 +145,12 @@ if ($miner_type -eq 'arto-stak') {
 if ($miner_type -eq 'bittube-miner') {
     Set-Variable -Name "miner_app" -Value "$path\Miner-Bittube\bittube-miner.exe"
 }
+if ($miner_type -eq 'xmr-stak-alloy') {
+    Set-Variable -Name "miner_app" -Value "$path\Miner-XMRstak-Alloy\xmr-stak.exe"
+    $miner_type = "xmr-stak"
+    $config = "config-alloy.txt"
+    $ignore_httpd = "yes"
+}
 
 Write-Host "...Setting Mining Application to $miner_app"
 
@@ -165,7 +174,7 @@ else {
 }
 
 # Configure the attributes for the mining software.
-$worker_settings = "--poolconf $path\$pc\pools.txt --config $path\config.txt --currency $algo --url $pool --user $wallet$fixed_diff --rigid $pc --pass w=$pc --cpu $path\$pc\cpu.txt --amd $path\$pc\$amd_config_file --nvidia $path\$pc\nvidia.txt"
+$worker_settings = "--poolconf $path\$pc\pools.txt --config $path\$config --currency $algo --url $pool --user $wallet$fixed_diff --rigid $pc --pass w=$pc --cpu $path\$pc\cpu.txt --amd $path\$pc\$amd_config_file --nvidia $path\$pc\nvidia.txt"
 
 Write-Host "...Starting $miner_type in another window."
 
@@ -182,7 +191,18 @@ else {
     $best_coin_check = $get_coin_check.current
 }
 
-
+# Kill worker if already running.
+$worker_running = Get-Process $miner_type -ErrorAction SilentlyContinue
+if ($worker_running) {
+    # try gracefully first
+    $worker_running.CloseMainWindow() | out-null
+    # kill after five seconds
+    Sleep 5
+    if (!$worker_running.HasExited) {
+        $worker_running | Stop-Process -Force | out-null
+    }
+}
+Remove-Variable worker_running
 
 # Start the mining software, wait for the process to begin.
 start-process -FilePath $miner_app -args $worker_settings -WindowStyle Minimized
@@ -222,26 +242,30 @@ Do {
 
         # Edit for adding static mining
 
-if ($static_mode -eq "yes") {
-    $best_coin_check = $default_coin
-}
-else {
-    $best_coin_check = $get_coin_check.current
-}
-  
-        Write-host $TimeNow : "Checking Coin Profitability."
-        Write-Host $TimeNow : "Best Coin to Mine:" $best_coin_check -ForegroundColor Yellow
-  
-        if ($best_coin -eq $best_coin_check) {
-  
-            Write-Host $TimeNow : "Sleeping for another" $set_sleep "seconds, then checking again."
+        if ($static_mode -eq "yes") {
+            $best_coin_check = $default_coin
         }
+        else {
+            $best_coin_check = $get_coin_check.current
+        }
+        else {
+            Write-host $TimeNow : "Checking Coin Profitability."
+            Write-Host $TimeNow : "Best Coin to Mine:" $best_coin_check -ForegroundColor Yellow
+            if ($best_coin -eq $best_coin_check) {
+  
+                Write-Host $TimeNow : "Sleeping for another" $set_sleep "seconds, then checking again."
+            }
+        
+        }
+        
     }
     else {
-  
+        if ($static_mode -eq "no") {
         Write-Host $TimeNow : "Currently mining $best_coin : Checking again at $TimeEnd."
+        }
     }
     # Check if worker url is working, then get the current hashrate from mining software
+    
     $HTTP_Request = [System.Net.WebRequest]::Create('http://127.0.0.1:8080/api.json')
     $HTTP_Response = $HTTP_Request.GetResponse()
     $HTTP_Status = [int]$HTTP_Response.StatusCode
@@ -264,7 +288,7 @@ else {
     
     }
     else {
-        Write-Host $TimeNow : "Waiting on worker to warm up before displaying hashrate." -ForegroundColor Cyan
+        Write-Host $TimeNow : "Waiting on worker to displaying hashrate." -ForegroundColor Cyan
     }
   
     Start-Sleep -Seconds $set_sleep
